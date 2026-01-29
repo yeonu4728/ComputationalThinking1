@@ -1,0 +1,331 @@
+---
+title: "ComputationalThinking1"
+author: "Andres&Yeonu"
+format: pdf
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+### 1. Functions
+
+```{r}
+# Create a new function called add_one
+# x will be the only input to the function
+add_one  <- function(x){
+  
+  # Add x and 1 together, store as the object "output"
+  output <- x + 1
+  
+  # Print out whatever is stored in "output"
+  return(output)
+  
+} 
+# Supply 10 to our function
+add_one(x = 10)
+
+# Create a new function called add_together
+# x and y will be the two arguments to the function
+add_together  <- function(x, y){
+  
+  # Add x and y together, store as the object "output"
+  output <- x + y
+  
+  # Print out whatever is stored in "output"
+  return(output)
+  
+} 
+
+```
+
+### Q1.1
+
+```{r}
+add_together(3,5)
+```
+
+### Q1.2
+
+```{r eval=FALSE}
+add_together(3,'five')
+```
+
+Error in x + y : non-numeric argument to binary operator
+
+'five' is not number, but the function require the number. So the error talks about it.
+
+### Q1.3 Create your own function
+
+```{r}
+math_time  <- function(x, y, z){
+  output<-(((x-y)^2)/z)
+  
+  # Print out whatever is stored in "output"
+  return(output)
+  
+} 
+
+math_time(5,2,9)
+```
+
+output: 1
+
+### Working with vectors as input
+
+```{r}
+# Create a function called lbs_to_kg that takes a data object 'weights' as input
+lbs_to_kg  <- function(weights){
+  
+  # Multiply weights by 0.454, store as the object "output"
+  output <- weights*0.454
+  
+  # Print out whatever is stored in "output"
+  return(output)
+  
+} 
+
+bison <- c(1000, 800, 1200, 1400)
+
+lbs_to_kg(weights = bison)
+```
+
+### Q1.4
+
+```{r}
+deviation<-function(vector){
+  mean_value<-mean(vector)
+  output<-vector-mean_value
+  return(output)
+}
+
+deviation(bison)
+```
+
+## 2. Iteration
+
+```{r}
+# Look at the first 6 rows of iris
+head(iris)
+
+iris %>% 
+  group_by(Species) %>% 
+  summarize(Sepal.Length = mean(Sepal.Length),
+            Sepal.Width = mean(Sepal.Width),
+            Petal.Length = mean(Petal.Length),
+            Petal.Width = mean(Petal.Width))
+
+```
+
+```{r}
+
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = c(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width), 
+                   .fns = mean))
+```
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = Sepal.Length:Petal.Width, 
+                   .fns = mean))
+
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = everything(), 
+                   .fns = mean))
+```
+
+### Q2.2
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = everything(), 
+                   .fns = median))
+```
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = where(is.numeric), 
+                   .fns = mean))
+```
+
+### Q2.3
+
+```{r}
+cereal<-read.csv("data/cereal.csv")
+cereal %>%
+  group_by(mfr) %>% 
+  summarize(across(.cols = where(is.numeric), 
+                   .fns = mean))
+```
+
+### For-loops
+
+```{r}
+for (i in 1:5) {
+  # Print out whatever the value of i is
+  print(i)
+}
+
+for (i in 1:5) {
+  print(i*2)
+}
+```
+
+### Q2.4
+
+```{r}
+for (i in 1:10) {
+  print(i*2)
+}
+```
+
+```{r}
+N0 = 100  #initial population size
+
+years = 20  #number of years into the future
+
+N = vector(length = years)  # create an empty vector to store pop. sizes
+
+N[1] = N0  #initial population size should be the first N
+
+lambda = 1.2  #growth rate
+
+print(N)
+
+# For every year t in 2 through 20 (remember, "years" also equals 20), apply the following equation
+for (t in 2:20) {
+  N[t] = N[t - 1] * lambda # Apply the equation
+}
+
+N
+
+# Store the data output as a dataframe for plotting
+popn_data <- tibble(years = 1:years, # Make the years column = 1, 2, 3, ..., 20
+                    popn = N) # Make the population column the corresponding population vector that we calculated
+
+# Now plot the data with years on the x axis and population on the y
+popn_data %>% 
+  ggplot(aes(x = years, y = popn)) +
+  geom_point()
+```
+
+### Q2.5a
+
+```{r}
+N0 = 300  #initial population size
+
+years = 50  #number of years into the future
+
+N = vector(length = years)  # create an empty vector to store pop. sizes
+
+N[1] = N0  #initial population size should be the first N
+
+lambda = 0.95  #growth rate
+
+print(N)
+
+# For every year t in 2 through 20 (remember, "years" also equals 20), apply the following equation
+for (t in 2:years) {
+  N[t] = N[t - 1] * lambda # Apply the equation
+}
+
+N
+```
+
+### Q2.5b
+
+```{r}
+popn_data <- tibble(years = 1:years, # Make the years column = 1, 2, 3, ..., 20
+                    popn = N) # Make the population column the corresponding population vector that we calculated
+
+# Now plot the data with years on the x axis and population on the y
+popn_data %>% 
+  ggplot(aes(x = years, y = popn)) +
+  geom_point()
+```
+
+### Loop through data frames
+
+```{r}
+head(iris)
+iris[1,]
+iris[,3]
+iris[1,3]
+for (i in 1:5) {
+  
+  # This prints out a statement saying "Here's column i", 
+  #but the i gets replaced with the number that it's currently at
+  print(paste("Here's column",i))
+  
+  # This prints out column i
+  print(iris[,i])
+}
+for (i in 1:4) {
+  
+  # This prints out a statement saying "Here's column i", but the i gets replaced with the number that it's currently at
+  print(paste("Here's column",i))
+  
+  # This prints out column i
+  print(mean(iris[,i]))
+}
+iris %>% 
+  summarize(across(.cols = 1:4, 
+                   .fns = mean))
+```
+
+### Q2.6
+
+It depends on what kind of data it is. I usually prefer to use a for loop because I'm not good at using various functions and I can make changes I want with a for loop. But I think summarize/across functions are convenient for data in this course.
+
+```{r}
+for (i in 1:4) {
+  # Fetch the column names of the dataframe, store in a vector "names"
+  names <- colnames(iris)
+  
+  # Print out the "i"th element of the vector to print alongside the output
+  print(names[i])
+  
+  # This prints out column i
+  print(mean(iris[,i]))
+}
+```
+
+### Q2.7
+
+```{r}
+# Store a vector of unique species names from the Species column of Iris
+spp_names <- unique(iris$Species)
+
+# do for-loop for each unique species names
+for (i in 1:length(spp_names)) {
+  
+  filt_data <- iris %>% 
+    # Filter the data has specific species name
+    filter(Species == spp_names[i])
+  
+  # Draw plot with filtered data
+  plot <- filt_data %>% 
+    # Draw plot which x-axis is Petal.Length and y-axis is Petal.Width
+    ggplot(aes(x = Petal.Length,
+               y = Petal.Width)) +
+    # Show point that describe the value of each data
+    geom_point() +
+    # Smoothed conditional means for the value
+    geom_smooth(method = "lm") +
+    # Set scale limits
+    lims(x = c(0,8),
+         y = c(0,3)) +
+    # Put each species' name to the title
+    ggtitle(paste("Species:", spp_names[i]))
+  
+  # Print the plot
+  print(plot)
+}
+```
