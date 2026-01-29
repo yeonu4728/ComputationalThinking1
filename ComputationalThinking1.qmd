@@ -139,6 +139,14 @@ iris %>%
                    .fns = mean))
 ```
 
+### Q2.1
+
+Centimeters
+
+```{r}
+?iris
+```
+
 ### Q2.2
 
 ```{r}
@@ -242,7 +250,7 @@ N
 ### Q2.5b
 
 ```{r}
-popn_data <- tibble(years = 1:years, # Make the years column = 1, 2, 3, ..., 20
+popn_data <- tibble(years = 1:years, # Make the years column = 1, 2, 3, ..., 50
                     popn = N) # Make the population column the corresponding population vector that we calculated
 
 # Now plot the data with years on the x axis and population on the y
@@ -310,7 +318,7 @@ for (i in 1:length(spp_names)) {
     # Filter the data has specific species name
     filter(Species == spp_names[i])
   
-  # Draw plot with filtered data
+  # Make a plot and store it to data object called plot
   plot <- filt_data %>% 
     # Draw plot which x-axis is Petal.Length and y-axis is Petal.Width
     ggplot(aes(x = Petal.Length,
